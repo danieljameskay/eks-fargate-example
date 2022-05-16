@@ -19,7 +19,7 @@ resource "null_resource" "kubectl" {
 }
 
 resource "null_resource" "fargate_patch_coredns" {
-  depends_on = [null_resource.kubectl]
+  depends_on = [aws_eks_fargate_profile.default]
   provisioner "local-exec" {
     command = "/bin/bash ./scripts/patch_coredns_deployment.sh"
   }
@@ -53,5 +53,5 @@ resource "aws_eks_fargate_profile" "default" {
   selector {
     namespace = "default"
   }
-  
+
 }
