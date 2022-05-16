@@ -19,21 +19,21 @@ resource "null_resource" "kubectl" {
 }
 
 resource "null_resource" "fargate_patch_coredns" {
-  depends_on = [aws_eks_fargate_profile.default]
+  depends_on = [null_resource.deploy_logging_artifacts]
   provisioner "local-exec" {
     command = "/bin/bash ./scripts/patch_coredns_deployment.sh"
   }
 }
 
 resource "null_resource" "deploy_logging_artifacts" {
-  depends_on = [null_resource.fargate_patch_coredns]
+  depends_on = [aws_eks_fargate_profile.default]
   provisioner "local-exec" {
     command = "/bin/bash ./logging/deploy.sh"
   }
 }
 
 resource "null_resource" "deploy_guestbook_application" {
-  depends_on = [null_resource.deploy_logging_artifacts]
+  depends_on = [null_resource.fargate_patch_coredns]
   provisioner "local-exec" {
     command = "/bin/bash ./guestbook-app/deploy.sh"
   }
